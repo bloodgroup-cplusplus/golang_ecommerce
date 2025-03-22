@@ -1,29 +1,23 @@
-package main 
-import "fmt"
+package main
 
+import "github.com/prometheus/client_golang/prometheus"
 
-func sendMailSimple() {
-  smtp.PlainAuth(
-    "",
-    "clrsclrsclrsclrsclrs@gmail.com",
-    "",
-    "smtp.gmail.com",
+// define promethus metrics
 
-    )
-    
-    msg := "Subject : My special subject \n this is the body"
-    smtp.SendMail(
-    "smtp.gmail.com:587",
-    auth,
-    "clrsclrsclrsclrsclrs@gmail.com",
-    [] string {"clrsclrsclrsclrsclrs@gmail.com"}
-    )
-
-    if err !=nil {
-      fmt.Println(err)
-  }
-}
-
-func main () {
-  fmt.Println("Hello World")
-}
+var (
+	addGoalCounter = prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "add_goal_requests_total",
+		Help: "Total number of add goal requests",
+	})
+	removeGoalCounter = prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "remove_goal_requests_total",
+		Help: "Total number of remove goal requests",
+	})
+	httpRequestsCounter = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "http_requests_total",
+			Help: "Total number of HTTP requests",
+		},
+		[]string{"path"},
+	)
+)
