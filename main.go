@@ -1,6 +1,10 @@
 package main
 
-import "github.com/prometheus/client_golang/prometheus"
+import (
+	"database/sql"
+
+	"github.com/prometheus/client_golang/prometheus"
+)
 
 // define promethus metrics
 
@@ -21,3 +25,15 @@ var (
 		[]string{"path"},
 	)
 )
+
+func init() {
+	// Register prometheus metrics
+	prometheus.MustRegister(addGoalCounter)
+	prometheus.MustRegister(removeGoalCounter)
+	prometheus.MustRegister(httpRequestsCounter)
+
+}
+
+func createConnection() (*sql.DB,error) {
+	connStr := fmt.
+}
