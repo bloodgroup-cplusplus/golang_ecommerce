@@ -2,7 +2,10 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
+	"os"
 
+	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -34,6 +37,27 @@ func init() {
 
 }
 
-func createConnection() (*sql.DB,error) {
-	connStr := fmt.
+func createConnection() (*sql.DB, error) {
+	connStr := fmt.Sprintf("user=%s password=%s port=%s dbname=%s sslmode=%s",
+		os.Getenv("DB_USERNAME"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
+		os.Getenv("SSL"),
+	)
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		return nil, err
+	}
+	err = db.Ping()
+	if err != nil {
+		return nil, err
+
+	}
+	return db, nil
+}
+
+func main() {
+	router := gin.Default()
 }
