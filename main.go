@@ -88,6 +88,50 @@ func main() {
 				ID   int
 				Name string
 			}
+			if err := rows.Scan(&goal.ID, &goal.Name); err != nil {
+				log.Println("Error scanning row", err)
+				continue
+			}
+
+			goals = append(goals, goal)
 		}
+		httpRequestsCounter.WithLabelValues("/").Inc()
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"goals": goals,
+		})
+	})
+	router.POST("/add_goal", func(c *gin.Context) {
+		goalName := c.PostForm("goal_name")
+		if goalName != "" {
+			_, err = db.Exec("INSERT INTO goals (goal_name) VALUES($1)", goalName)
+			if err != nil {
+				log.Println("error inserting goal", err)
+				c.String(http.StatusInternalServerError, "Error inserting values")
+				return
+			}
+			// Increment the add goal counter
+			addGoalCounter.Inc()
+			httpRequestsCounter.WithLabelValues("/add_goal").Inc()
+
+		}
+		c.Redirect(http.StatusFound, "/")
+	})
+	router.POST("/remove_goal", func(c *gin.Context) {
+		goalID := c.PostForm("goal_id")
+		if goalID != "" {
+			_, err = db.Exec("DELETE FROM goals WHERE id = $1", goalID) // Increment the remove goal counter
+			if err != nil {
+				log.Println("Error deleting goal", err)
+				c.String(http.StatusInternalServerError, "Error deleting goal from the database")
+				return
+			}
+			removeGoalCounter.Inc()
+			httpRequestsCounter.WithLabelValues("/remove_goal").Inc()
+		}
+		c.Redirect(http.StatusFound, "/")
+	})
+	router.GET("/health", func(c *gin.Context) {
+		httpRequestsCounter.WithLabelValues("/health").Inc()
+		c.String(http.StatusOK, "OK")
 	})
 }
