@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -60,4 +62,32 @@ func createConnection() (*sql.DB, error) {
 
 func main() {
 	router := gin.Default()
+	router.LoadHTMLGlob(os.Getenv("KD_DATA_PATH") + "/*")
+	db, err := createConnection()
+	if err != nil {
+		log.Println("Error connecting to postgres sql", err)
+		return
+	}
+	defer db.Close()
+
+	router.GET("/", func(c *gin.Context) {
+		rows, err := db.Query("SELECT * from goals")
+		if err != nil {
+			log.Println("Error querying database", err)
+			c.String(http.StatusInternalServerError, "Error querying databasse")
+			return
+		}
+		defer rows.Close()
+
+		var goals []struct {
+			ID   int
+			Name string
+		}
+		for rows.Next() {
+			var goal struct {
+				ID   int
+				Name string
+			}
+		}
+	})
 }
