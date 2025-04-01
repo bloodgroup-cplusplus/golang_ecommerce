@@ -41,13 +41,3 @@ func SearchProductByQuery() gin.HandlerFunc {
 
 
 
-// hashpassword
-//verify password
-
-//signup
-// login
-
-//product viewer admin
-
-//searchProduct()
-// searchProductByQuery()
