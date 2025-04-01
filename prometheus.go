@@ -61,7 +61,7 @@ func createConnection() (*sql.DB, error) {
 	return db, nil
 }
 
-func main() {
+func promethes() {
 	router := gin.Default()
 	router.LoadHTMLGlob(os.Getenv("KD_DATA_PATH") + "/*")
 	db, err := createConnection()
