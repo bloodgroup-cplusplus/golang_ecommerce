@@ -48,7 +48,11 @@ func Login() gin.HandlerFunc{
 			fmt.Println(msg)
 			return
 		}
-		token,refreshToken, _ := generate.TokenGenerator(*founduser.Email,*fou)
+		token,refreshToken, _ := generate.TokenGenerator(*founduser.Email,*founduser.First_Name,*founduser.Last_Name, *founduser.User_ID)
+		defer cancel()
+
+		generate.UpdateAllTokens(token,refreshToken, founduser.User_ID)
+		c.JSON(http.StatusFound,founduser)
 
 
 	}
