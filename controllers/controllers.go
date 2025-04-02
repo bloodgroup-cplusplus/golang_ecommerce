@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -23,7 +24,34 @@ func VerifyPassword(userPassword string, givenPassword string) (bool, string) {
 }
 
 func Login() gin.HandlerFunc{
-	return nil
+	return func (c *gin.Context) {
+		var ctx,cancel = context.WithTimeout(context.Background(),100*time.Second)
+		defer cancel()
+		var user models.User
+		// c the gin context does the marshalling and unmarshelling of the data
+		if err := c.BindJSON(&user); err !=nil {
+			c.JSON(http.StatusBadRequest,gin.H{"error":err})
+			return 
+		} 
+		UserCollection.FindOne(ctx,bson.M{"email":user.Email}).Decode(&founduser)
+		defer cancel()
+
+		if err !=nil {
+			c.JSON(http.StatusInternalServerError,gin.H{"error":"login or password incorrectk"})
+			return
+		}
+		PasswordIsValid, msg := VerifyPassword(*user.Password, *founduser.Password)
+		defer cancel()
+
+		if !PasswordIsValid {
+			c.JSON{http.StatusInternalServerError,gin.H{"error":msg}}
+			fmt.Println(msg)
+			return
+		}
+		token,refreshToken, _ := generate.TokenGenerator(*founduser.Email,*fou)
+
+
+	}
 
 }
 
