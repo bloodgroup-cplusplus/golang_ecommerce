@@ -1,9 +1,26 @@
 package controllers
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
-func AddToCart() gin.HandlerFunc {
-	return nil
+type Application struct {
+	prodCollection * mongo.Collection
+	userCollection *mongo.Collection
+
+}
+func NewApplication(prodCollection,userCollection *mongo.Collection) *Application {
+	return &Application{
+		prodCollection: prodCollection,
+		userCollection: userCollection,
+
+	}
+}
+func(app *Application) AddToCart() gin.HandlerFunc {
+	return func (c *gin.Context) {
+
+	}
 
 }
 
