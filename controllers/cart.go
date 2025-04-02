@@ -61,8 +61,24 @@ func(app *Application) AddToCart() gin.HandlerFunc {
 
 }
 
-func RemoveItem() gin.HandlerFunc {
-	return nil
+func (app *Application) RemoveItem() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		productQueryID := c.Query("id")
+		if productQueryID == "" {
+			log.Println("Product id is empty")
+			_ = c.AbortWithError(http.StatusBadRequest,errors.New("product is empty"))
+			return
+		}
+		userQueryID := c.Query("userID")
+		if userQueryID == "" {
+			log.Println("User id is empty")
+			_ = c.AbortWithError(http.StatusBadRequest,errors.New("User id is empty"))
+			return
+		}
+		productID, err := primitive.ObjectIDFromHex()
+
+
+	}
 
 }
 
