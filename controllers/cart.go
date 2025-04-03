@@ -75,7 +75,14 @@ func (app *Application) RemoveItem() gin.HandlerFunc {
 			_ = c.AbortWithError(http.StatusBadRequest,errors.New("User id is empty"))
 			return
 		}
-		productID, err := primitive.ObjectIDFromHex()
+		productID, err := primitive.ObjectIDFromHex(productQueryID)
+		if err !=nil {
+			log.Println(err)
+			c.AborthWithStatus(http.StatusInternalServerError)
+			return 
+		}
+		var ctx,cancel = context.WithTimeout(context.Background(),5*time.Second)
+		defer cancel()
 
 
 	}
